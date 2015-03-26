@@ -4,7 +4,6 @@ This project was created to implement BadUSB on a device using python.  It was b
 It contains the python module ```pybadusb``` which is used to communicate with a USB device.
 
 ##Requirements
-Was tested under the following environment:
 * Python 2.7.9
 * Windows environment
 
