@@ -17,9 +17,9 @@ Links for finding your own burner image:
 * [More info](https://github.com/adamcaudill/Psychson/wiki/Obtaining-a-Burner-Image)
 
 ###Rubber Ducky
-Testing was only performed with USB Rubber Ducky scripts.  The used test script can be found in [rubberducky/keys.txt](rubberducky/keys.txt).
+Testing was only performed with USB Rubber Ducky scripts.  The test script used can be found in [rubberducky/keys.txt](rubberducky/keys.txt).
 
-You may create you own according to the Rubber Ducky format or use one of [these](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Payloads).
+You may create you own according to the [Rubber Ducky format](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript) or use one of [these](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Payloads).
 
 Use [DuckEncoder](https://code.google.com/p/ducky-decode/downloads/detail?name=DuckEncoder_2.6.3.zip&can=2&q=) to compile your script:
 ```
@@ -35,7 +35,7 @@ from pybadusb import badusb, phison
 payload  = 'rubberducky/inject.bin'
 firmware = 'bin/fw.bin'
 burner   = 'bin/BN03V114M.BIN'
-embedded  = 'hid.bin'
+embedded = 'hid.bin'
 
 # Finds USB device starting at 'G'
 device = badusb.findDrive(phison.Phison2303)
@@ -59,7 +59,7 @@ The module is split up into three parts:
   - Used to create SCSI commands for the device to get info, burn firmware, etc.
 * scsi
   - Used to send SCSI commands to the device
-  - Written in C++, code can be found in (src/scsimodule.cpp)[src/scsimodule.cpp]
+  - Written in C++; code can be found in (src/scsimodule.cpp)[src/scsimodule.cpp]
 
 ##Known Phison2303 Chipset Devices
 A list can be found [here](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices)
