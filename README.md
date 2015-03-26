@@ -30,7 +30,7 @@ The created binary can then be embedded into the base firmware.  See example cod
 ###Phison Device
 This is currently only known and developed to work with USB devices with the Phison 2303 chipset.
 
-It doesn't seem to be documented which USB devices use the chipset, but a list of devices was create on the [Psychson wiki](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices).
+It doesn't seem to be documented which USB devices use the chipset, but a list of devices was created on the [Psychson wiki](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices).
 
 If you are looking for a device, it should be note that the chipset is only for USB3.0.
 It should also be noted that this project will not work with USB2.0 or lower because they do not use SCSI commands.
