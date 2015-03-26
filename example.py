@@ -14,8 +14,8 @@ if __name__ == '__main__':
 	burner   = 'bin/BN03V114M.BIN'
 	
 	print 'Getting device..'
-	device = badusb.getDevice(phison.Phison2303, 'H')
-	#device = badusb.findDrive(phison.Phison2303) # alternative
+	device = badusb.get_device(phison.Phison2303, 'H')
+	#device = badusb.find_drive(phison.Phison2303) # alternative
 	
 	if not device:
 		print 'Device not found!'

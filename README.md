@@ -1,5 +1,5 @@
 #PyBadUSB
-This project was created to implement BadUSB on a device using python.  It was based off of code and ideas from [adamcaudill/Psychson](https://github.com/adamcaudill/Psychson) and [flowswitch/phison](https://bitbucket.org/flowswitch/phison).
+This project was created to implement BadUSB on a device using python.  It was inspired from [adamcaudill/Psychson](https://github.com/adamcaudill/Psychson) and [flowswitch/phison](https://bitbucket.org/flowswitch/phison).
 
 It contains the python module ```pybadusb``` which is used to communicate with a USB device.
 
@@ -47,7 +47,7 @@ burner   = 'bin/BN03V114M.BIN'
 embedded = 'hid.bin'
 
 # Finds USB device starting at 'G'
-device = badusb.findDrive(phison.Phison2303)
+device = badusb.find_drive(phison.Phison2303)
 
 # Embed firmware
 badusb.embed(payload, firmware, embedded)

@@ -73,7 +73,7 @@ def embed_burn(device, payload_file, fwfile, burner_file):
 	if not new_firmware: return False
 	return burn_firmware(device, burner_file, firmware=new_firmware)
 
-def findDrive(device_type, start='E', end='P'):
+def find_drive(device_type, start='E', end='P'):
 	'''
 	findDrive(device_type, start='E', end='P') -> attempts to create a new device_type starting at drive 'E' and ending at 'P'
 	'''
@@ -83,7 +83,7 @@ def findDrive(device_type, start='E', end='P'):
 			return device
 	return False
 
-def getDevice(device_type, letter):
+def get_device(device_type, letter):
 	'''
 	getDevice(device_type, letter) -> creates a new device_type with drive letter.
 	
@@ -94,4 +94,4 @@ def getDevice(device_type, letter):
 		return device
 	return False
 
-__all__ = ['embed', 'burn_firmware', 'embed_burn', 'findDrive', 'getDevice']
+__all__ = ['embed', 'burn_firmware', 'embed_burn', 'find_drive', 'get_device']

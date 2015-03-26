@@ -13,9 +13,9 @@ class Phison():
 	Base Phison chipset class.
 	'''
 	
-	def __init__(self, driveLetter):
-		self.driveLetter = driveLetter
-		self.SCSI_device = scsi.open(r'\\.\%s:' % self.driveLetter)
+	def __init__(self, drive_letter):
+		self.drive_letter = drive_letter
+		self.SCSI_device = scsi.open(r'\\.\%s:' % self.drive_letter)
 		
 		self.data = None 
 		self.version = None
