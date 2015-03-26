@@ -7,7 +7,7 @@ It contains the python module ```pybadusb``` which is used to communicate with a
 * Python 2.7.9
 * Windows environment
 
-#Firmware
+###Firmware
 The base firmware you can use is in [bin/fw.bin](bin/fw.bin).
 You can compile your own [here](https://github.com/adamcaudill/Psychson/tree/master/firmware).
 
@@ -16,7 +16,7 @@ Links for finding your own burner image:
 *(usbdev)[http://www.usbdev.ru/files/phison/]
 *(More info)[https://github.com/adamcaudill/Psychson/wiki/Obtaining-a-Burner-Image]
 
-#Rubber Ducky
+###Rubber Ducky
 Testing was only performed with USB Rubber Ducky scripts.  The used test script can be found in (rubberducky/keys.txt)[rubberducky/keys.txt].
 
 You may create you own according to the Rubber Ducky format or use one of [these](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Payloads).
