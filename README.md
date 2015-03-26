@@ -19,7 +19,7 @@ Links for finding your own burner image:
 ###Rubber Ducky
 Testing was only performed with USB Rubber Ducky scripts.  The test script used can be found in [rubberducky/keys.txt](rubberducky/keys.txt).
 
-You may create you own according to the [Rubber Ducky format](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript) or use one of [these](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Payloads).
+You may create your own according to the [Rubber Ducky format](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript) or use one of [these](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Payloads).
 
 Use [DuckEncoder](https://code.google.com/p/ducky-decode/downloads/detail?name=DuckEncoder_2.6.3.zip&can=2&q=) to compile your script:
 ```
