@@ -59,7 +59,7 @@ The module is split up into three parts:
   - Used to create SCSI commands for the device to get info, burn firmware, etc.
 * scsi
   - Used to send SCSI commands to the device
-  - Written in C++; code can be found in (src/scsimodule.cpp)[src/scsimodule.cpp]
+  - Written in C++; code can be found in [src/scsimodule.cpp](src/scsimodule.cpp)
 
 ##Known Phison2303 Chipset Devices
 A list can be found [here](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices)
