@@ -59,15 +59,15 @@ badusb.burn_firmware(device, burner, fwfile=firmware)
 # Finished
 device.close()
 ```
-Another example can be found in ```example.py```
+Another example can be found in [example.py](example.py)
 
 ##Module
-The Python module is split up into three parts:
-* badusb
+The Python module is split up into three files:
+* [badusb](pybadusb/badusb.py)
   - Used to embed firmware and burn firmware to a device.
-* phison
+* [phison](pybadusb/phison.py)
   - Used to create SCSI commands for the device to get info, burn firmware, etc.
-* scsi
+* [scsi](pybadusb/scsi.pyd)
   - Used to send SCSI commands to the device
   - Written in C++; source code can be found in [src/scsimodule.cpp](src/scsimodule.cpp)
 
