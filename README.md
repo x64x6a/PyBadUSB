@@ -27,6 +27,15 @@ java -jar encoder.java -i keys.txt -o inject.bin
 ```
 The created binary can then be embedded into the base firmware.  See example code below.
 
+###Phison Device
+This is currently only known and developed to work with USB devices with the Phison 2303 chipset.
+
+It doesn't seem to be documented which USB devices use the chipset, but a list of devices was create on the Psychson [wiki](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices).
+
+If you are looking for a device, it should be note that the chipset is only for USB3.0.
+It should also be noted that this project will not work with USB2.0 or lower because they do not use SCSI commands.
+More info on this can be found [here](http://en.wikipedia.org/wiki/USB_Attached_SCSI).
+
 ##Example Code
 ```python
 from pybadusb import badusb, phison
@@ -61,5 +70,3 @@ The module is split up into three parts:
   - Used to send SCSI commands to the device
   - Written in C++; code can be found in [src/scsimodule.cpp](src/scsimodule.cpp)
 
-##Known Phison2303 Chipset Devices
-A list can be found [here](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices)

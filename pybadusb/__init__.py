@@ -1,2 +1,2 @@
-import scsi, phison, embed
-__all__ = ["scsi", "phison", "embed"]
+import scsi, phison, badusb
+__all__ = ["scsi", "phison", "badusb"]

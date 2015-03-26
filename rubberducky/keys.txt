@@ -1,4 +1,4 @@
-DELAY 5000
+DELAY 1000
 GUI r
 DELAY 50
 STRING https://www.youtube.com/watch?v=dQw4w9WgXcQ
