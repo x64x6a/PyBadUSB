@@ -1,6 +1,6 @@
 #PyBadUSB
 PyBadUSB was created to implement BadUSB on a Phison 2303 device using Python.
-It was inspired from [adamcaudill/Psychson](https://github.com/adamcaudill/Psychson) and [flowswitch/phison](https://bitbucket.org/flowswitch/phison).
+The code was inspired from [adamcaudill/Psychson](https://github.com/adamcaudill/Psychson) and [flowswitch/phison](https://bitbucket.org/flowswitch/phison).
 
 The python module ```pybadusb``` is used to communicate with a specified USB device.
 
