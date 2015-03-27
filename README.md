@@ -5,7 +5,7 @@ The code was inspired from [adamcaudill/Psychson](https://github.com/adamcaudill
 The python module ```pybadusb``` is used to communicate with a specified USB device.
 
 ##Requirements
-* Python 2.7.9
+* Python 2.7.9 (32 bit)
 * Windows environment
 
 ###Firmware
