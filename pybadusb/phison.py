@@ -90,24 +90,18 @@ class Phison2303(Phison):
 		
 		return True
 	
-	def load_file(self, firmware, hdr='\x03', bdy='\x02', isFirmware=False):
+	def load_file(self, firmware, hdr='\x03', bdy='\x02'):
 		'''
 		Loads given firmware. Returns bool.
 		'''
-		# TODO:  fix the issue resolving size.. isFirmware=False is temp solution...
+		header = firmware[:512]
 		
-		header = firmware[:0x200]
-		firmware = firmware[0x200:]
 		if header[0:8] != 'BtPramCd':
 			raise Exception('Not a Phison image file')
 		
-		if isFirmware:
-			#size = len(firmware) - 512
-			size = 204800 # size of firmware images (?)
-		else:
-			size = struct.unpack('<L', header[0x10:0x14])[0]
-			size *= 0x400 # burner size is in 1k pages
-		
+		size = len(firmware) - 1024
+		firmware = firmware[512:]
+		print size;exit()
 		# send header
 		if not self.SCSI_device.write('\x06\xB1'+hdr+'\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00', header):
 			return False
@@ -157,10 +151,10 @@ class Phison2303(Phison):
 		sleep(2)
 		
 		# sending firmware
-		self.load_file(firmware,'\x01','\x00', isFirmware=True)
+		self.load_file(firmware,'\x01','\x00')
 		ret = self.SCSI_device.read('\x06\xEE\x01\x00\x00\x00\x00\x00\x00', 72)
 		sleep(2)
-		self.load_file(firmware,'\x03','\x02', isFirmware=True)
+		self.load_file(firmware,'\x03','\x02')
 		self.SCSI_device.read('\x06\xEE\x01\x01\x00\x00\x00\x00\x00', 72)
 		self.SCSI_device.read('\x06\xEE\x00\x00\x00\x00\x00\x00\x00', 72)
 		self.SCSI_device.read('\x06\xEE\x00\x01\x00\x00\x00\x00\x00', 72)
