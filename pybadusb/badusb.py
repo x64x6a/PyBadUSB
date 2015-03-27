@@ -50,14 +50,16 @@ def burn_firmware(device, burner_file, fwfile=None, firmware=None):
 		raise Exception("Invalid Parameters")
 		return False
 	
-	# read from fwfile
+	# read from fwfile and re-set firmware
 	if fwfile:
 		with open(fwfile, 'rb') as f:
 			firmware = f.read()
 	
+	# read from burner
 	with open(burner_file, 'rb') as f:
 		burner = f.read()
 	
+	# start doing stuff
 	if device.run_mode != _FWBURNR:
 		if device.run_mode != _BOOTROM:
 			device.brom()
