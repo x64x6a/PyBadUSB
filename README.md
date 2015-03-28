@@ -1,6 +1,6 @@
 #PyBadUSB
 PyBadUSB was created to implement BadUSB on a Phison 2303 device using Python.
-The code was inspired from [adamcaudill/Psychson](https://github.com/adamcaudill/Psychson) and [flowswitch/phison](https://bitbucket.org/flowswitch/phison).
+The project was inspired by [adamcaudill/Psychson](https://github.com/adamcaudill/Psychson) and [flowswitch/phison](https://bitbucket.org/flowswitch/phison).
 
 The python module ```pybadusb``` is used to communicate with a specified USB device.
 
@@ -37,12 +37,16 @@ If you are looking for a device, it should be noted that the Phison 2303 chipset
 It should also be noted that this project will not work with USB2.0 or lower because they do not use SCSI commands.
 More info on this can be found [here](http://en.wikipedia.org/wiki/USB_Attached_SCSI).
 
+The [checkchipinfo](checkchipinfo.py) script may also be of use to you.
+
 ##Installation
-```batch
+Run the setup script:
+```
 python setup.py install
 ```
 
 ##Example Code
+Here's some example code to get you started:
 ```python
 from pybadusb import badusb, phison
 
