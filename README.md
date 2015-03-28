@@ -5,7 +5,7 @@ The code was inspired from [adamcaudill/Psychson](https://github.com/adamcaudill
 The python module ```pybadusb``` is used to communicate with a specified USB device.
 
 ##Requirements
-* Python 2.7.9 (32 bit)
+* Python 2.7
 * Windows environment
 
 ###Firmware
@@ -37,6 +37,11 @@ If you are looking for a device, it should be noted that the Phison 2303 chipset
 It should also be noted that this project will not work with USB2.0 or lower because they do not use SCSI commands.
 More info on this can be found [here](http://en.wikipedia.org/wiki/USB_Attached_SCSI).
 
+##Installation
+```batch
+python setup.py install
+```
+
 ##Example Code
 ```python
 from pybadusb import badusb, phison
@@ -67,7 +72,7 @@ The Python module is split up into three files:
   - Used to embed firmware and burn firmware to a device.
 * [phison](pybadusb/phison.py)
   - Used to create SCSI commands for the device to get info, burn firmware, etc.
-* [scsi](pybadusb/scsi.pyd)
+* [scsi](pybadusb/src/scsi.cpp)
   - Used to send SCSI commands to the device
-  - Written in C++; source code can be found in [src/scsimodule.cpp](src/scsimodule.cpp)
+  - Written in C++ as an extension module
 

@@ -1,10 +1,9 @@
 #include <Python.h>
 #include <structmember.h>
-#include <stdint.h>
 #include <windows.h>
 #include <ntddscsi.h> 
 
-#define IOCTL_SCSI_PASS_THROUGH_DIRECT    0x4D014
+typedef unsigned char uint8_t;
 #define SCSI_IOCTL_DATA_OUT               0
 #define SCSI_IOCTL_DATA_IN                1
 #define SCSI_IOCTL_DATA_UNSPECIFIED       2
@@ -262,7 +261,6 @@ static PyObject *
 scsi_open(PyObject *self, PyObject *args)
 {
 	char *device_name;
-	wchar_t *path;
 	HANDLE handle;
 	PyObject *SCSI_args = NULL;
 	PyObject *SCSI_kwds = NULL;
@@ -271,7 +269,8 @@ scsi_open(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "s", &device_name))
 		return NULL;
 	
-	path=(wchar_t *) malloc((strlen(device_name)/sizeof(char))*sizeof(wchar_t));
+#if defined(UNICODE) || defined(_UNICODE)
+	wchar_t *path = (wchar_t *) malloc((strlen(device_name)/sizeof(char))*sizeof(wchar_t));
 	mbstowcs(path, device_name, strlen(device_name)+sizeof(char));
 	handle = CreateFile(path, 
 		GENERIC_READ | GENERIC_WRITE,
@@ -282,6 +281,16 @@ scsi_open(PyObject *self, PyObject *args)
 		0
 	);
 	free(path);
+#else
+	handle = CreateFile(device_name, 
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		0,
+		OPEN_EXISTING,
+		0x20000000,
+		0
+	);
+#endif
 	
 	if (handle==INVALID_HANDLE_VALUE){
 		Py_INCREF(Py_None);
