@@ -7,8 +7,8 @@
 
 #define SCSI_IOCTL_DATA_OUT               0
 #define SCSI_IOCTL_DATA_IN                1
-//#define SCSI_IOCTL_DATA_IO_SIZE           sizeof(SCSI_PASS_THROUGH_DIRECT) // if this works, replace things...
-#define SCSI_IOCTL_DATA_IO_SIZE           0x50
+#define SCSI_IOCTL_DATA_IO_SIZE           sizeof(SCSI_PASS_THROUGH_DIRECT) // if this works, replace things...
+//#define SCSI_IOCTL_DATA_IO_SIZE           0x50
 
 #endif
 #ifdef linux
@@ -133,6 +133,7 @@ SCSI_read(PyObject *self, PyObject *args)
 		return Py_None;
 	}
 	#endif
+	
 	#ifdef linux
 	if (handle < 0)
 	{
@@ -216,6 +217,7 @@ SCSI_write(PyObject *self, PyObject *args)
 		return Py_None;
 	}
 	#endif
+	
 	#ifdef linux
 	if (handle < 0)
 	{
@@ -277,6 +279,7 @@ SCSI_close(PyObject *self)
 		CloseHandle(tmp);
 	}
 	#endif
+	
 	#ifdef linux
 	if (handle >= 0)
 	{
@@ -312,6 +315,7 @@ SCSI_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 		#ifdef MS_WINDOWS
 		self->handle = Py_BuildValue("i", INVALID_HANDLE_VALUE);
 		#endif
+		
 		#ifdef linux
 		self->handle = Py_BuildValue("i", -1);
 		#endif
@@ -452,6 +456,7 @@ scsi_open(PyObject *self, PyObject *args)
 		);
 		#endif
 	#endif
+	
 	#ifdef linux
 		handle = open(device_name, O_RDWR);
 	#endif
@@ -462,6 +467,7 @@ scsi_open(PyObject *self, PyObject *args)
 		return Py_None;
 	}
 	#endif
+	
 	#ifdef linux
 	if (handle < 0){
 		Py_INCREF(Py_None);
