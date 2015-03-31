@@ -1,4 +1,5 @@
 import sys
+import platform
 
 _BOOTROM = "BROM"
 _FWBURNR = "BN"
@@ -67,27 +68,31 @@ def burn_firmware(device, burner_file, fwfile=None, firmware=None):
 			return False
 	return device.run_firmware(firmware)
 
-def embed_burn(device, payload_file, fwfile, burner_file):
+def badusb(device, payload_file, fwfile, burner_file):
 	'''
-	embed_burn(device, payload_file, fwfile, burner_file) -> embeds payload into firmware and then burns to device.
+	badusb(device, payload_file, fwfile, burner_file) -> embeds payload into firmware and then burns to device.
 	'''
 	new_firmware = embed(payload_file, fwfile)
 	if not new_firmware: return False
 	return burn_firmware(device, burner_file, firmware=new_firmware)
 
-def find_drive(device_type, start='E', end='P'):
-	'''
-	findDrive(device_type, start='E', end='P') -> attempts to create a new device_type starting at drive 'E' and ending at 'P'
-	'''
-	for i in range(ord(start), ord(end)):
-		device = device_type(chr(i))
-		if device.SCSI_device:
-			return device
-	return False
+if platform.system() == 'Windows':
+	def find_drive(device_type, start='E', end='P'):
+		'''
+		find_drive(device_type, start='E', end='P') -> attempts to create a new device_type starting at drive 'E' and ending at 'P'
+		'''
+		if platform.system() == 'Windows':
+			return False
+		for i in range(ord(start), ord(end)):
+			device = device_type(chr(i))
+			if device.SCSI_device:
+				return device
+		return False
+# TODO: create alternative of find_drive
 
 def get_device(device_type, letter):
 	'''
-	getDevice(device_type, letter) -> creates a new device_type with drive letter.
+	get_device(device_type, letter) -> creates a new device_type with drive letter.
 	
 	Returns False on failure.
 	'''

@@ -31,7 +31,7 @@ if __name__ == '__main__':
 	print_info(device)
 	
 	print 'Embeding payload and burning it...'
-	if not badusb.embed_burn(device, payload, firmware, burner):
+	if not badusb.badusb(device, payload, firmware, burner):
 		print 'Failed burning payload!'
 		exit()
 	

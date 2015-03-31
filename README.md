@@ -6,7 +6,7 @@ The python module ```pybadusb``` is used to communicate with a specified USB dev
 
 ##Requirements
 * Python 2.7
-* Windows environment
+* Windows or Linux environment
 
 ###Firmware
 The base firmware you can use is in [bin/fw.bin](bin/fw.bin).
