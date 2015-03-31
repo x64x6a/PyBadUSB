@@ -64,17 +64,17 @@ static sg_io_hdr_t *getSGHDR(unsigned char direction, unsigned timeout, unsigned
 	sg_io_hdr *io_hdr;
 	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
 
-	io_hdr.interface_id = 'S';
-	io_hdr.dxfer_direction = direction;
-	io_hdr.timeout = timeout;
+	io_hdr->interface_id = 'S';
+	io_hdr->dxfer_direction = direction;
+	io_hdr->timeout = timeout;
 	
-	io_hdr.cmdp = cdb;
-	io_hdr.cmd_len = cdb_size;
+	io_hdr->cmdp = cdb;
+	io_hdr->cmd_len = cdb_size;
 	
-	io_hdr.dxferp = data;
-	io_hdr.dxfer_len = data_size;
+	io_hdr->dxferp = data;
+	io_hdr->dxfer_len = data_size;
 	
-	io_hdr.mx_sb_len = 0x18;
+	io_hdr->mx_sb_len = 0x18;
 
 	return io_hdr;
 }
@@ -107,11 +107,11 @@ SCSI_read(PyObject *self, PyObject *args)
 	void *data;
 	unsigned int cdb_size, data_size;
 	int timeout, status;
-	unsigned long BytesReturned = 0;
 	HANDLE handle;
 	PyObject *response;
 	
 	#ifdef MS_WINDOWS
+	DWORD BytesReturned = 0;
 	SCSI_PASS_THROUGH_DIRECT *sptd;
 	#endif
 
@@ -163,8 +163,8 @@ SCSI_read(PyObject *self, PyObject *args)
 	#endif
 	
 	#ifdef linux
-	io_hdr = getSGHDR(SG_DXFER_FROM_DEV, timeout, cdb, cdb_size, data, data_size)
-	status = ioctl(handle, SG_IO, &io_hdr)
+	io_hdr = getSGHDR(SG_DXFER_FROM_DEV, timeout, cdb, cdb_size, data, data_size);
+	status = ioctl(handle, SG_IO, &io_hdr);
 	
 	// handle this better
 	//   throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
@@ -191,11 +191,11 @@ SCSI_write(PyObject *self, PyObject *args)
 	void *data;
 	unsigned int cdb_size, data_size;
 	int timeout, status;
-	unsigned long BytesReturned = 0;
 	HANDLE handle;
 	PyObject *response;
 	
 	#ifdef MS_WINDOWS
+	DWORD BytesReturned = 0;
 	SCSI_PASS_THROUGH_DIRECT *sptd;
 	#endif
 
@@ -235,8 +235,8 @@ SCSI_write(PyObject *self, PyObject *args)
 	#endif
 
 	#ifdef linux
-	io_hdr = getSGHDR(SG_DXFER_TO_DEV, timeout, cdb, cdb_size, data, data_size)
-	status = ioctl(handle, SG_IO, &io_hdr)
+	io_hdr = getSGHDR(SG_DXFER_TO_DEV, timeout, cdb, cdb_size, data, data_size);
+	status = ioctl(handle, SG_IO, &io_hdr);
 
 	// handle this better
 	//   throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
@@ -278,7 +278,7 @@ SCSI_close(PyObject *self)
 	}
 	#endif
 	#ifdef linux
-	if (handle < 0)
+	if (handle >= 0)
 	{
 		new_handle = Py_BuildValue("i", -1);
 		tmp = ((SCSI_Object *)self)->handle;
@@ -286,7 +286,8 @@ SCSI_close(PyObject *self)
 		((SCSI_Object *)self)->handle = new_handle;
 		Py_XDECREF(tmp);
 		
-		close(tmp);
+		PyArg_Parse(tmp, "i", &handle);
+		close(handle);
 	}
 	#endif
 	

@@ -1,9 +1,9 @@
-from distutils.core import setup
-from distutils.extension import Extension
+from setuptools import setup
+from setuptools import Extension
 
 setup(	name='pybadusb',
 		version='1.0',
 		packages=['pybadusb'],
 		ext_package='pybadusb',
-		ext_modules=[Extension('scsi', ['pybadusb/src/scsi.cpp'])],
+		ext_modules=[Extension('scsi', ['pybadusb/src/scsi.cpp'], extra_compile_args = ["-Wno-write-strings"])],
 	)
