@@ -81,8 +81,6 @@ if platform.system() == 'Windows':
 		'''
 		find_drive(device_type, start='E', end='P') -> attempts to create a new device_type starting at drive 'E' and ending at 'P'
 		'''
-		if platform.system() == 'Windows':
-			return False
 		for i in range(ord(start), ord(end)):
 			device = device_type(chr(i))
 			if device.SCSI_device:

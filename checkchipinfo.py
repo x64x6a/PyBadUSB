@@ -12,8 +12,8 @@ def print_info(device):
 	print info
 
 if __name__ == '__main__':
-	#device = badusb.findDrive(phison.Phison2303)
-	device = badusb.findDrive(phison.Phison2303,'H')  # If your USB devices start at 'H'
+	#device = badusb.find_drive(phison.Phison2303)
+	device = badusb.find_drive(phison.Phison2303,'H')  # If your USB devices start at 'H'
 	if not device:
 		print "Device not found"
 	elif not device.get_info():
