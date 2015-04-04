@@ -58,8 +58,8 @@ static SCSI_PASS_THROUGH_DIRECT *getSPTD(unsigned char direction, unsigned timeo
 #ifdef linux
 static sg_io_hdr_t *getSGHDR(unsigned char direction, unsigned timeout, unsigned char *cdb, unsigned cdb_size, void *data, unsigned data_size)
 {
-	sg_io_hdr *io_hdr = (sg_io_hdr *) malloc(sizeof(sg_io_hdr_t));
-	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
+	sg_io_hdr_t *io_hdr = (sg_io_hdr_t *) malloc(sizeof(sg_io_hdr_t));
+	memset(io_hdr, 0, sizeof(sg_io_hdr_t));
 
 	io_hdr->interface_id = INTERFACE_ID;
 	io_hdr->dxfer_direction = direction;
@@ -71,7 +71,7 @@ static sg_io_hdr_t *getSGHDR(unsigned char direction, unsigned timeout, unsigned
 	io_hdr->dxferp = data;
 	io_hdr->dxfer_len = data_size;
 	
-	io_hdr->mx_sb_len = SENSE_INFO_LENGTH;
+	//io_hdr->mx_sb_len = SENSE_INFO_LENGTH;
 
 	return io_hdr;
 }
@@ -113,7 +113,7 @@ SCSI_read(PyObject *self, PyObject *args)
 	#endif
 
 	#ifdef linux
-	sg_io_hdr *io_hdr;
+	sg_io_hdr_t *io_hdr;
 	#endif
 	
 	if (!PyArg_ParseTuple(args, "s#I", &cdb, &cdb_size, &data_size))
@@ -121,6 +121,7 @@ SCSI_read(PyObject *self, PyObject *args)
 	PyArg_Parse(((SCSI_Object *)self)->timeout, "i", &timeout);
 	PyArg_Parse(((SCSI_Object *)self)->handle, "i", &handle);
 	data = (void *) malloc(sizeof(char)*data_size);
+	memset(data, 0, sizeof(char)*data_size);
 	
 	// check if handle is invalid
 	#ifdef MS_WINDOWS
@@ -202,7 +203,7 @@ SCSI_write(PyObject *self, PyObject *args)
 	#endif
 
 	#ifdef linux
-	sg_io_hdr *io_hdr;
+	sg_io_hdr_t *io_hdr;
 	#endif
 	
 	if (!PyArg_ParseTuple(args, "s#s#", &cdb, &cdb_size, &data, &data_size))
