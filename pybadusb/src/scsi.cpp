@@ -34,7 +34,7 @@ typedef int HANDLE;
 static SCSI_PASS_THROUGH_DIRECT *getSPTD(unsigned char direction, unsigned timeout, unsigned char *cdb, unsigned cdb_size, void *data, unsigned data_size)
 {
 	SCSI_PASS_THROUGH_DIRECT *sptd = (SCSI_PASS_THROUGH_DIRECT *) malloc(sizeof(SCSI_PASS_THROUGH_DIRECT));
-	memset(sptd, NULL, sizeof(SCSI_PASS_THROUGH_DIRECT));
+	memset(sptd, 0, sizeof(SCSI_PASS_THROUGH_DIRECT));
 	
 	sptd->Length = sizeof(SCSI_PASS_THROUGH_DIRECT);
 	sptd->TargetId = TARGET_ID;
@@ -59,7 +59,7 @@ static SCSI_PASS_THROUGH_DIRECT *getSPTD(unsigned char direction, unsigned timeo
 static sg_io_hdr_t *getSGHDR(unsigned char direction, unsigned timeout, unsigned char *cdb, unsigned cdb_size, void *data, unsigned data_size)
 {
 	sg_io_hdr *io_hdr = (sg_io_hdr *) malloc(sizeof(sg_io_hdr_t));
-	memset(&io_hdr, NULL, sizeof(sg_io_hdr_t));
+	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
 
 	io_hdr->interface_id = INTERFACE_ID;
 	io_hdr->dxfer_direction = direction;
@@ -495,7 +495,7 @@ scsi_open(PyObject *self, PyObject *args)
 */
 static PyMethodDef scsi_Methods[] = {
 	{"open",  scsi_open, METH_VARARGS, "Returns SCSI device object if succeeds, otherwise returns None."},
-	{NULL, NULL, NULL, NULL}
+	{NULL, NULL, 0, NULL}
 };
 
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
