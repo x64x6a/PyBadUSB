@@ -7,7 +7,9 @@
 
 #define SCSI_IOCTL_DATA_OUT               0
 #define SCSI_IOCTL_DATA_IN                1
-#define SCSI_IOCTL_DATA_IO_SIZE           0x50
+#define SCSI_IOCTL_DATA_IO_SIZE           80
+#define TARGET_ID                         1
+#define SENSE_INFO_OFFSET                 48
 
 #endif
 #ifdef linux
@@ -18,9 +20,11 @@
 #include <scsi/sg.h>
 
 typedef int HANDLE;
+#define INTERFACE_ID                      'S'
+#define INVALID_HANDLE_VALUE              -1
 #endif
 
-
+#define SENSE_INFO_LENGTH                 24
 #define DEFAULT_TIMEOUT                   30
 
 /*
@@ -29,12 +33,11 @@ typedef int HANDLE;
 #ifdef MS_WINDOWS
 static SCSI_PASS_THROUGH_DIRECT *getSPTD(unsigned char direction, unsigned timeout, unsigned char *cdb, unsigned cdb_size, void *data, unsigned data_size)
 {
-	// be sure to free later
 	SCSI_PASS_THROUGH_DIRECT *sptd = (SCSI_PASS_THROUGH_DIRECT *) malloc(sizeof(SCSI_PASS_THROUGH_DIRECT));
-	memset(sptd, 0, sizeof(SCSI_PASS_THROUGH_DIRECT));
+	memset(sptd, NULL, sizeof(SCSI_PASS_THROUGH_DIRECT));
 	
 	sptd->Length = sizeof(SCSI_PASS_THROUGH_DIRECT);
-	sptd->TargetId = 1;
+	sptd->TargetId = TARGET_ID;
 
 	sptd->DataIn = direction;
 	sptd->TimeOutValue = timeout;
@@ -45,8 +48,8 @@ static SCSI_PASS_THROUGH_DIRECT *getSPTD(unsigned char direction, unsigned timeo
 	memcpy(sptd->Cdb, cdb, cdb_size);
 	sptd->CdbLength = cdb_size;
 
-	sptd->SenseInfoLength = 0x18;
-	sptd->SenseInfoOffset = 0x30;
+	sptd->SenseInfoLength = SENSE_INFO_LENGTH;
+	sptd->SenseInfoOffset = SENSE_INFO_OFFSET;
 
 	return sptd;
 }
@@ -55,11 +58,10 @@ static SCSI_PASS_THROUGH_DIRECT *getSPTD(unsigned char direction, unsigned timeo
 #ifdef linux
 static sg_io_hdr_t *getSGHDR(unsigned char direction, unsigned timeout, unsigned char *cdb, unsigned cdb_size, void *data, unsigned data_size)
 {
-	// be sure to free later
 	sg_io_hdr *io_hdr = (sg_io_hdr *) malloc(sizeof(sg_io_hdr_t));
-	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
+	memset(&io_hdr, NULL, sizeof(sg_io_hdr_t));
 
-	io_hdr->interface_id = 'S';
+	io_hdr->interface_id = INTERFACE_ID;
 	io_hdr->dxfer_direction = direction;
 	io_hdr->timeout = timeout;
 	
@@ -69,7 +71,7 @@ static sg_io_hdr_t *getSGHDR(unsigned char direction, unsigned timeout, unsigned
 	io_hdr->dxferp = data;
 	io_hdr->dxfer_len = data_size;
 	
-	io_hdr->mx_sb_len = 0x18;
+	io_hdr->mx_sb_len = SENSE_INFO_LENGTH;
 
 	return io_hdr;
 }
@@ -106,7 +108,7 @@ SCSI_read(PyObject *self, PyObject *args)
 	PyObject *response;
 	
 	#ifdef MS_WINDOWS
-	DWORD BytesReturned = 0;
+	DWORD BytesReturned = NULL;
 	SCSI_PASS_THROUGH_DIRECT *sptd;
 	#endif
 
@@ -195,7 +197,7 @@ SCSI_write(PyObject *self, PyObject *args)
 	PyObject *response;
 	
 	#ifdef MS_WINDOWS
-	DWORD BytesReturned = 0;
+	DWORD BytesReturned = NULL;
 	SCSI_PASS_THROUGH_DIRECT *sptd;
 	#endif
 
@@ -218,7 +220,7 @@ SCSI_write(PyObject *self, PyObject *args)
 	#endif
 	
 	#ifdef linux
-	if (handle < 0)
+	if (handle <= INVALID_HANDLE_VALUE)
 	{
 		Py_INCREF(Py_None);
 		return Py_None;
@@ -282,7 +284,7 @@ SCSI_close(PyObject *self)
 	#endif
 	
 	#ifdef linux
-	if (handle >= 0)
+	if (handle > INVALID_HANDLE_VALUE)
 	{
 		new_handle = Py_BuildValue("i", -1);
 		tmp = ((SCSI_Object *)self)->handle;
@@ -318,7 +320,7 @@ SCSI_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 		#endif
 		
 		#ifdef linux
-		self->handle = Py_BuildValue("i", -1);
+		self->handle = Py_BuildValue("i", INVALID_HANDLE_VALUE);
 		#endif
 	}
 
@@ -440,20 +442,20 @@ scsi_open(PyObject *self, PyObject *args)
 		handle = CreateFile(path, 
 			GENERIC_READ | GENERIC_WRITE,
 			FILE_SHARE_READ | FILE_SHARE_WRITE,
-			0,
+			NULL,
 			OPEN_EXISTING,
-			0x20000000,
-			0
+			FILE_FLAG_NO_BUFFERING,
+			NULL
 		);
 		free(path);
 		#else
 		handle = CreateFile(device_name, 
 			GENERIC_READ | GENERIC_WRITE,
 			FILE_SHARE_READ | FILE_SHARE_WRITE,
-			0,
+			NULL,
 			OPEN_EXISTING,
-			0x20000000,
-			0
+			FILE_FLAG_NO_BUFFERING,
+			NULL
 		);
 		#endif
 	#endif
@@ -470,7 +472,7 @@ scsi_open(PyObject *self, PyObject *args)
 	#endif
 	
 	#ifdef linux
-	if (handle < 0){
+	if (handle <= INVALID_HANDLE_VALUE){
 		Py_INCREF(Py_None);
 		return Py_None;
 	}
@@ -493,7 +495,7 @@ scsi_open(PyObject *self, PyObject *args)
 */
 static PyMethodDef scsi_Methods[] = {
 	{"open",  scsi_open, METH_VARARGS, "Returns SCSI device object if succeeds, otherwise returns None."},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, NULL, NULL}
 };
 
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
