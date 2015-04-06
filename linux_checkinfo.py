@@ -2,6 +2,7 @@
 This script could be used to check a USB device's chipset.
 It should work if the device is Phison(?)
 '''
+import sys
 from pybadusb import badusb, phison
 
 def print_info(device):
@@ -12,8 +13,14 @@ def print_info(device):
 	print info
 
 if __name__ == '__main__':
-	#device = badusb.find_drive(phison.Phison2303)
-	device = badusb.find_drive(phison.Phison2303,'H')  # If your USB devices start at 'H'
+	if len(sys.argv) < 2:
+		print "No! Like this:\n\tpython %s [path to device]" % sys.argv[0]
+		exit()
+	
+	device_path = sys.argv[1]
+	
+	device = badusb.get_device(phison.Phison2303, device_path)
+	
 	if not device:
 		print "Device not found"
 	elif not device.get_info():
