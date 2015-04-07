@@ -165,7 +165,7 @@ SCSI_read(PyObject *self, PyObject *args)
 	
 	#ifdef linux
 	io_hdr = getSGHDR(SG_DXFER_FROM_DEV, timeout, cdb, cdb_size, data, data_size);
-	status = ioctl(handle, SG_IO, &io_hdr);
+	status = ioctl(handle, SG_IO, io_hdr);
 	
 	// handle this better
 	//   throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
