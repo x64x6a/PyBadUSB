@@ -107,7 +107,7 @@ class Phison2303(Phison):
 		
 		size = len(firmware) - 1024
 		firmware = firmware[512:]
-		print size;exit()
+		
 		# send header
 		if not self.SCSI_device.write('\x06\xB1'+hdr+'\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00', header):
 			return False
