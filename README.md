@@ -24,7 +24,7 @@ You may create your own according to the [Rubber Ducky format](https://github.co
 
 Use [DuckEncoder](https://code.google.com/p/ducky-decode/downloads/detail?name=DuckEncoder_2.6.3.zip&can=2&q=) to compile your script:
 ```
-java -jar encoder.java -i keys.txt -o inject.bin
+java -jar encoder.jar -i keys.txt -o inject.bin
 ```
 The created binary can then be embedded into the base firmware.  See example code below.
 
