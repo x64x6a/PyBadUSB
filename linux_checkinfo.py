@@ -1,6 +1,7 @@
 '''
-This script could be used to check a USB device's chipset.
-It should work if the device is Phison(?)
+This script could be used to check a USB device's chipset on Linux.
+It should work if the device is Phison.
+It may not work if the device is BadUSB'd
 '''
 import sys
 from pybadusb import badusb, phison

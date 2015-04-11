@@ -6,7 +6,7 @@ The python module ```pybadusb``` is used to communicate with a specified USB dev
 
 ##Requirements
 * Python 2.7
-* Windows or Linux environment
+* Windows or Linux
 
 ###Firmware
 The base firmware you can use is in [bin/fw.bin](bin/fw.bin).
@@ -37,7 +37,8 @@ If you are looking for a device, it should be noted that the Phison 2303 chipset
 It should also be noted that this project will not work with USB2.0 or lower because they do not use SCSI commands.
 More info on this can be found [here](http://en.wikipedia.org/wiki/USB_Attached_SCSI).
 
-The [checkchipinfo](checkchipinfo.py) script may also be of use to you.
+You can check a device's chipset using a one of these scripts:  [Windows](win_checkinfo.py) or [Linux](linux_checkinfo.py).
+
 
 ##Installation
 Run the setup script:
@@ -81,5 +82,5 @@ The Python module is split up into three files:
   - Used to create SCSI commands for the device to get info, burn firmware, etc.
 * [scsi](pybadusb/src/scsi.cpp)
   - Used to send SCSI commands to the device
-  - Written in C++ as an extension module
+  - Written in C++ as a Python extension module
 
