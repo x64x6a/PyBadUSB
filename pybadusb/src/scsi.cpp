@@ -70,8 +70,6 @@ static sg_io_hdr_t *getSGHDR(unsigned char direction, unsigned timeout, unsigned
 	
 	io_hdr->dxferp = data;
 	io_hdr->dxfer_len = data_size;
-	
-	//io_hdr->mx_sb_len = SENSE_INFO_LENGTH;
 
 	return io_hdr;
 }
@@ -155,7 +153,7 @@ SCSI_read(PyObject *self, PyObject *args)
 	else
 	{
 		// failure
-		// handle better --> throw error according to GetLastError() and/or status ?
+		// TODO: handle better --> throw error according to GetLastError() and/or status ?
 		free(data);
 		free(sptd);
 		Py_INCREF(Py_None);
@@ -168,8 +166,8 @@ SCSI_read(PyObject *self, PyObject *args)
 	status = ioctl(handle, SG_IO, io_hdr);
 	
 	// handle this better
-	//   throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
-	//  may be able to handle even better:  http://www.tldp.org/HOWTO/SCSI-Generic-HOWTO/pexample.html
+	//  TODO: throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
+	//        may be able to handle even better:  http://www.tldp.org/HOWTO/SCSI-Generic-HOWTO/pexample.html
 	if (status < 0) {
 		// failure
 		free(data);
@@ -233,7 +231,7 @@ SCSI_write(PyObject *self, PyObject *args)
 	sptd = getSPTD(SCSI_IOCTL_DATA_OUT, timeout, cdb, cdb_size, data, data_size);
 	status = DeviceIoControl(handle, IOCTL_SCSI_PASS_THROUGH_DIRECT, sptd, SCSI_IOCTL_DATA_IO_SIZE, sptd, SCSI_IOCTL_DATA_IO_SIZE, &BytesReturned, 0);
 	
-	// handle errors --> throw error (if(!status)) according to GetLastError() and/or status ?
+	// TODO: handle errors better --> throw error (if(!status)) according to GetLastError() and/or status ?
 	response = Py_BuildValue("i", status);
 	free(sptd);
 	return response;
@@ -244,8 +242,8 @@ SCSI_write(PyObject *self, PyObject *args)
 	status = ioctl(handle, SG_IO, &io_hdr);
 
 	// handle this better
-	//   throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
-	//  may be able to handle even better:  http://www.tldp.org/HOWTO/SCSI-Generic-HOWTO/pexample.html
+	//  TODO: throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
+	//        may be able to handle even better:  http://www.tldp.org/HOWTO/SCSI-Generic-HOWTO/pexample.html
 	if (status < 0) {
 		// failure
 		response = Py_BuildValue("i", 0);
