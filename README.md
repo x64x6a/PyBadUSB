@@ -59,6 +59,9 @@ embedded = 'hid.bin'
 # Finds USB device starting at 'G'
 device = badusb.find_drive(phison.Phison2303)
 
+# Linux method:
+#device = badusb.get_device(phison.Phison2303, '/dev/sg2')
+
 # Embed firmware
 badusb.embed(payload, firmware, embedded)
 

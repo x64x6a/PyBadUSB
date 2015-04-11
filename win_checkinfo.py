@@ -18,7 +18,7 @@ if __name__ == '__main__':
 	device_letter = 'H' if  len(sys.argv) < 2 else sys.argv[1]
 	
 	#device = badusb.find_drive(phison.Phison2303)
-	device = badusb.find_drive(phison.Phison2303, device_letter)
+	device = badusb.get_device(phison.Phison2303, device_letter)
 	
 	if not device:
 		print "Device not found"

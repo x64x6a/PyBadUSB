@@ -13,11 +13,9 @@ def print_info(device):
 	print info
 
 if __name__ == '__main__':
-	if len(sys.argv) < 2:
-		print "No! Like this:\n\tpython %s [path to device]" % sys.argv[0]
-		exit()
 	
-	device_path = sys.argv[1]
+	# default path to scsi device is /dev/sg2
+	device_path = '/dev/sg2' if  len(sys.argv) < 2 else sys.argv[1]
 	
 	device = badusb.get_device(phison.Phison2303, device_path)
 	
