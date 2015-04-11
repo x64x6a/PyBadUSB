@@ -56,8 +56,8 @@ firmware = 'bin/fw.bin'
 burner   = 'bin/BN03V114M.BIN'
 embedded = 'hid.bin'
 
-# Finds USB device starting at 'G'
-device = badusb.find_drive(phison.Phison2303)
+# Get device at drive letter 'H'
+device = badusb.get_device(phison.Phison2303, 'H')
 
 # Embed firmware
 badusb.embed(payload, firmware, embedded)
