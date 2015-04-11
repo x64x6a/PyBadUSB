@@ -60,7 +60,7 @@ embedded = 'hid.bin'
 # Get device at drive letter 'H'
 device = badusb.get_device(phison.Phison2303, 'H')
 
-# Linux method:
+# For Linux:
 #device = badusb.get_device(phison.Phison2303, '/dev/sg2')
 
 # Embed firmware
