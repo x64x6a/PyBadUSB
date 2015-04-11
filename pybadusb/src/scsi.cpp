@@ -435,32 +435,32 @@ scsi_open(PyObject *self, PyObject *args)
 		return NULL;
 	
 	#ifdef MS_WINDOWS
-		#if defined(UNICODE) || defined(_UNICODE)
-		wchar_t *path = (wchar_t *) malloc((strlen(device_name)/sizeof(char))*sizeof(wchar_t));
-		mbstowcs(path, device_name, strlen(device_name)+sizeof(char));
-		handle = CreateFile(path, 
-			GENERIC_READ | GENERIC_WRITE,
-			FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL,
-			OPEN_EXISTING,
-			FILE_FLAG_NO_BUFFERING,
-			NULL
-		);
-		free(path);
-		#else
-		handle = CreateFile(device_name, 
-			GENERIC_READ | GENERIC_WRITE,
-			FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL,
-			OPEN_EXISTING,
-			FILE_FLAG_NO_BUFFERING,
-			NULL
-		);
-		#endif
+	#if defined(UNICODE) || defined(_UNICODE)
+	wchar_t *path = (wchar_t *) malloc((strlen(device_name)/sizeof(char))*sizeof(wchar_t));
+	mbstowcs(path, device_name, strlen(device_name)+sizeof(char));
+	handle = CreateFile(path, 
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		NULL,
+		OPEN_EXISTING,
+		FILE_FLAG_NO_BUFFERING,
+		NULL
+	);
+	free(path);
+	#else
+	handle = CreateFile(device_name, 
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		NULL,
+		OPEN_EXISTING,
+		FILE_FLAG_NO_BUFFERING,
+		NULL
+	);
+	#endif
 	#endif
 	
 	#ifdef linux
-		handle = open(device_name, O_RDWR);
+	handle = open(device_name, O_RDWR);
 	#endif
 
 	#ifdef MS_WINDOWS
