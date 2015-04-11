@@ -1,39 +1,79 @@
 #include <Python.h>
 #include <structmember.h>
-#include <windows.h>
-#include <ntddscsi.h> 
 
-typedef unsigned char uint8_t;
+#ifdef MS_WINDOWS
+#include <windows.h>
+#include <ntddscsi.h>
+
 #define SCSI_IOCTL_DATA_OUT               0
 #define SCSI_IOCTL_DATA_IN                1
-#define SCSI_IOCTL_DATA_UNSPECIFIED       2
-#define SCSI_IOCTL_DATA_IO_SIZE           0x50
+#define SCSI_IOCTL_DATA_IO_SIZE           80
+#define TARGET_ID                         1
+#define SENSE_INFO_OFFSET                 48
+
+#endif
+#ifdef linux
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <scsi/sg.h>
+
+typedef int HANDLE;
+#define INTERFACE_ID                      'S'
+#define INVALID_HANDLE_VALUE              -1
+#endif
+
+#define SENSE_INFO_LENGTH                 24
 #define DEFAULT_TIMEOUT                   30
 
 /*
 			Internal Functions
 */
+#ifdef MS_WINDOWS
 static SCSI_PASS_THROUGH_DIRECT *getSPTD(unsigned char direction, unsigned timeout, unsigned char *cdb, unsigned cdb_size, void *data, unsigned data_size)
 {
-	uint8_t cmd[SCSI_IOCTL_DATA_IO_SIZE];
-	memset(cmd, 0, SCSI_IOCTL_DATA_IO_SIZE);
-
-	SCSI_PASS_THROUGH_DIRECT *sptd = (SCSI_PASS_THROUGH_DIRECT *)cmd;
+	SCSI_PASS_THROUGH_DIRECT *sptd = (SCSI_PASS_THROUGH_DIRECT *) malloc(sizeof(SCSI_PASS_THROUGH_DIRECT));
+	memset(sptd, 0, sizeof(SCSI_PASS_THROUGH_DIRECT));
+	
 	sptd->Length = sizeof(SCSI_PASS_THROUGH_DIRECT);
-	sptd->TimeOutValue = timeout;
-	sptd->PathId = 0;
-	sptd->TargetId = 1;
-	sptd->Lun = 0;
-	sptd->CdbLength = cdb_size;
-	sptd->SenseInfoLength = 0x18;
+	sptd->TargetId = TARGET_ID;
+
 	sptd->DataIn = direction;
-	sptd->DataTransferLength = data_size;
+	sptd->TimeOutValue = timeout;
+	
 	sptd->DataBuffer = data;
-	sptd->SenseInfoOffset = 0x30;
+	sptd->DataTransferLength = data_size;
+	
 	memcpy(sptd->Cdb, cdb, cdb_size);
+	sptd->CdbLength = cdb_size;
+
+	sptd->SenseInfoLength = SENSE_INFO_LENGTH;
+	sptd->SenseInfoOffset = SENSE_INFO_OFFSET;
 
 	return sptd;
 }
+#endif
+
+#ifdef linux
+static sg_io_hdr_t *getSGHDR(unsigned char direction, unsigned timeout, unsigned char *cdb, unsigned cdb_size, void *data, unsigned data_size)
+{
+	sg_io_hdr_t *io_hdr = (sg_io_hdr_t *) malloc(sizeof(sg_io_hdr_t));
+	memset(io_hdr, 0, sizeof(sg_io_hdr_t));
+
+	io_hdr->interface_id = INTERFACE_ID;
+	io_hdr->dxfer_direction = direction;
+	io_hdr->timeout = timeout;
+	
+	io_hdr->cmdp = cdb;
+	io_hdr->cmd_len = cdb_size;
+	
+	io_hdr->dxferp = data;
+	io_hdr->dxfer_len = data_size;
+
+	return io_hdr;
+}
+#endif
 
 /*
 			SCSI Device Object
@@ -62,33 +102,87 @@ SCSI_read(PyObject *self, PyObject *args)
 	void *data;
 	unsigned int cdb_size, data_size;
 	int timeout, status;
-	DWORD BytesReturned = 0;
 	HANDLE handle;
 	PyObject *response;
+	
+	#ifdef MS_WINDOWS
+	DWORD BytesReturned = NULL;
 	SCSI_PASS_THROUGH_DIRECT *sptd;
+	#endif
 
+	#ifdef linux
+	sg_io_hdr_t *io_hdr;
+	#endif
+	
 	if (!PyArg_ParseTuple(args, "s#I", &cdb, &cdb_size, &data_size))
 		return NULL;
 	PyArg_Parse(((SCSI_Object *)self)->timeout, "i", &timeout);
 	PyArg_Parse(((SCSI_Object *)self)->handle, "i", &handle);
 	data = (void *) malloc(sizeof(char)*data_size);
+	memset(data, 0, sizeof(char)*data_size);
 	
-
+	// check if handle is invalid
+	#ifdef MS_WINDOWS
+	if ((HANDLE)handle == INVALID_HANDLE_VALUE)
+	{
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	#endif
+	
+	#ifdef linux
+	if (handle < 0)
+	{
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	#endif
+	
+	// send read to scsi device
+	#ifdef MS_WINDOWS
 	sptd = getSPTD(SCSI_IOCTL_DATA_IN, timeout, cdb, cdb_size, data, data_size);
 	status = DeviceIoControl(handle, IOCTL_SCSI_PASS_THROUGH_DIRECT, sptd, SCSI_IOCTL_DATA_IO_SIZE, sptd, SCSI_IOCTL_DATA_IO_SIZE, &BytesReturned, 0);
 	if (status)
 	{
+		// success
 		response = Py_BuildValue("s#", data, data_size);
 		free(data);
+		free(sptd);
 		return response;
 	}
 	else
 	{
-		// throw error according to GetLastError() and/or status ?
+		// failure
+		// TODO: handle better --> throw error according to GetLastError() and/or status ?
 		free(data);
+		free(sptd);
 		Py_INCREF(Py_None);
 		return Py_None;
 	}
+	#endif
+	
+	#ifdef linux
+	io_hdr = getSGHDR(SG_DXFER_FROM_DEV, timeout, cdb, cdb_size, data, data_size);
+	status = ioctl(handle, SG_IO, io_hdr);
+	
+	// handle this better
+	//  TODO: throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
+	//        may be able to handle even better:  http://www.tldp.org/HOWTO/SCSI-Generic-HOWTO/pexample.html
+	if (status < 0) {
+		// failure
+		free(data);
+		free(io_hdr);
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	else {
+		// success
+		response = Py_BuildValue("s#", data, data_size);
+		free(data);
+		free(io_hdr);
+		return response;
+	}
+	#endif
 }
 
 static PyObject *
@@ -98,22 +192,69 @@ SCSI_write(PyObject *self, PyObject *args)
 	void *data;
 	unsigned int cdb_size, data_size;
 	int timeout, status;
-	DWORD BytesReturned = 0;
 	HANDLE handle;
 	PyObject *response;
+	
+	#ifdef MS_WINDOWS
+	DWORD BytesReturned = NULL;
 	SCSI_PASS_THROUGH_DIRECT *sptd;
+	#endif
 
+	#ifdef linux
+	sg_io_hdr_t *io_hdr;
+	#endif
+	
 	if (!PyArg_ParseTuple(args, "s#s#", &cdb, &cdb_size, &data, &data_size))
 		return NULL;
 	PyArg_Parse(((SCSI_Object *)self)->timeout, "i", &timeout);
 	PyArg_Parse(((SCSI_Object *)self)->handle, "i", &handle);
-
+	
+	// check if handle is invalid
+	#ifdef MS_WINDOWS
+	if (handle == INVALID_HANDLE_VALUE)
+	{
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	#endif
+	
+	#ifdef linux
+	if (handle <= INVALID_HANDLE_VALUE)
+	{
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	#endif
+	
+	// send write to scsi device
+	#ifdef MS_WINDOWS
 	sptd = getSPTD(SCSI_IOCTL_DATA_OUT, timeout, cdb, cdb_size, data, data_size);
 	status = DeviceIoControl(handle, IOCTL_SCSI_PASS_THROUGH_DIRECT, sptd, SCSI_IOCTL_DATA_IO_SIZE, sptd, SCSI_IOCTL_DATA_IO_SIZE, &BytesReturned, 0);
 	
-	// throw error (if(!status)) according to GetLastError() and/or status ?
+	// TODO: handle errors better --> throw error (if(!status)) according to GetLastError() and/or status ?
 	response = Py_BuildValue("i", status);
+	free(sptd);
 	return response;
+	#endif
+
+	#ifdef linux
+	io_hdr = getSGHDR(SG_DXFER_TO_DEV, timeout, cdb, cdb_size, data, data_size);
+	status = ioctl(handle, SG_IO, &io_hdr);
+
+	// handle this better
+	//  TODO: throw error like: printf("ioctl error: errno=%d (%s)\n", errno, strerror(errno));
+	//        may be able to handle even better:  http://www.tldp.org/HOWTO/SCSI-Generic-HOWTO/pexample.html
+	if (status < 0) {
+		// failure
+		response = Py_BuildValue("i", 0);
+	}
+	else {
+		// success
+		response = Py_BuildValue("i", 1);
+	}
+	free(io_hdr);
+	return response;
+	#endif
 }
 
 static PyObject *
@@ -128,6 +269,7 @@ SCSI_close(PyObject *self)
 		return Py_None;
 	}
 	
+	#ifdef MS_WINDOWS
 	if ((HANDLE)handle != INVALID_HANDLE_VALUE)
 	{
 		new_handle = Py_BuildValue("i", (int)INVALID_HANDLE_VALUE);
@@ -135,8 +277,25 @@ SCSI_close(PyObject *self)
 		Py_INCREF(new_handle);
 		((SCSI_Object *)self)->handle = new_handle;
 		Py_XDECREF(tmp);
+		
 		CloseHandle(tmp);
 	}
+	#endif
+	
+	#ifdef linux
+	if (handle > INVALID_HANDLE_VALUE)
+	{
+		new_handle = Py_BuildValue("i", -1);
+		tmp = ((SCSI_Object *)self)->handle;
+		Py_INCREF(new_handle);
+		((SCSI_Object *)self)->handle = new_handle;
+		Py_XDECREF(tmp);
+		
+		PyArg_Parse(tmp, "i", &handle);
+		close(handle);
+	}
+	#endif
+	
 	
 	Py_INCREF(Py_None);
 	return Py_None;
@@ -155,7 +314,13 @@ SCSI_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 			return NULL;
 		}
 		
+		#ifdef MS_WINDOWS
 		self->handle = Py_BuildValue("i", INVALID_HANDLE_VALUE);
+		#endif
+		
+		#ifdef linux
+		self->handle = Py_BuildValue("i", INVALID_HANDLE_VALUE);
+		#endif
 	}
 
 	return (PyObject *)self;
@@ -269,33 +434,48 @@ scsi_open(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "s", &device_name))
 		return NULL;
 	
-#if defined(UNICODE) || defined(_UNICODE)
-	wchar_t *path = (wchar_t *) malloc((strlen(device_name)/sizeof(char))*sizeof(wchar_t));
-	mbstowcs(path, device_name, strlen(device_name)+sizeof(char));
-	handle = CreateFile(path, 
-		GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		0,
-		OPEN_EXISTING,
-		0x20000000,
-		0
-	);
-	free(path);
-#else
-	handle = CreateFile(device_name, 
-		GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		0,
-		OPEN_EXISTING,
-		0x20000000,
-		0
-	);
-#endif
+	#ifdef MS_WINDOWS
+		#if defined(UNICODE) || defined(_UNICODE)
+		wchar_t *path = (wchar_t *) malloc((strlen(device_name)/sizeof(char))*sizeof(wchar_t));
+		mbstowcs(path, device_name, strlen(device_name)+sizeof(char));
+		handle = CreateFile(path, 
+			GENERIC_READ | GENERIC_WRITE,
+			FILE_SHARE_READ | FILE_SHARE_WRITE,
+			NULL,
+			OPEN_EXISTING,
+			FILE_FLAG_NO_BUFFERING,
+			NULL
+		);
+		free(path);
+		#else
+		handle = CreateFile(device_name, 
+			GENERIC_READ | GENERIC_WRITE,
+			FILE_SHARE_READ | FILE_SHARE_WRITE,
+			NULL,
+			OPEN_EXISTING,
+			FILE_FLAG_NO_BUFFERING,
+			NULL
+		);
+		#endif
+	#endif
 	
-	if (handle==INVALID_HANDLE_VALUE){
+	#ifdef linux
+		handle = open(device_name, O_RDWR);
+	#endif
+
+	#ifdef MS_WINDOWS
+	if (handle == INVALID_HANDLE_VALUE){
 		Py_INCREF(Py_None);
 		return Py_None;
 	}
+	#endif
+	
+	#ifdef linux
+	if (handle <= INVALID_HANDLE_VALUE){
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+	#endif
 	
 	Py_INCREF(&SCSIType);
 	device = (SCSI_Object *) SCSI_new(&SCSIType, NULL, NULL);

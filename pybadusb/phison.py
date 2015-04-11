@@ -1,6 +1,7 @@
 import sys
 import scsi
 import struct
+import platform
 from time import sleep
 
 _BOOTROM = "BROM"
@@ -10,12 +11,17 @@ _FRMWARE = "FW"
 
 class Phison():
 	'''
-	Base Phison chipset class.
+	Base Phison chipset object
 	'''
 	
 	def __init__(self, drive_letter):
 		self.drive_letter = drive_letter
-		self.SCSI_device = scsi.open(r'\\.\%s:' % self.drive_letter)
+		
+		# if Windows, it is the drive letter, otherwise the full path
+		if platform.system() == 'Windows':
+			self.SCSI_device = scsi.open(r'\\.\%s:' % self.drive_letter)
+		else:
+			self.SCSI_device = scsi.open(self.drive_letter)
 		
 		self.data = None 
 		self.version = None
@@ -36,7 +42,7 @@ class Phison():
 
 class Phison2303(Phison):
 	'''
-	Object used to communicate with the Phison2303 chipset.
+	Object used to communicate with the Phison2303 chipset
 	'''
 	def get_mode(self):
 		'''
@@ -101,7 +107,7 @@ class Phison2303(Phison):
 		
 		size = len(firmware) - 1024
 		firmware = firmware[512:]
-		print size;exit()
+		
 		# send header
 		if not self.SCSI_device.write('\x06\xB1'+hdr+'\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00', header):
 			return False
