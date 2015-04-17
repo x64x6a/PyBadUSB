@@ -51,8 +51,8 @@ Here's some example code to get you started:
 ```python
 from pybadusb import badusb, phison
 
-device_name = 'H'          # Windows
-device_name = '/dev/sg2'   # Linux
+device_name = 'H'           # Windows
+#device_name = '/dev/sg2'   # Linux
 
 # Set firmware file names
 payload  = 'rubberducky/inject.bin'
