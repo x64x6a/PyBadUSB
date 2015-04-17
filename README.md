@@ -51,17 +51,17 @@ Here's some example code to get you started:
 ```python
 from pybadusb import badusb, phison
 
+device_name = 'H'          # Windows
+device_name = '/dev/sg2'   # Linux
+
 # Set firmware file names
 payload  = 'rubberducky/inject.bin'
 firmware = 'bin/fw.bin'
 burner   = 'bin/BN03V114M.BIN'
 embedded = 'hid.bin'
 
-# Get device at drive letter 'H'
-device = badusb.get_device(phison.Phison2303, 'H')
-
-# For Linux:
-#device = badusb.get_device(phison.Phison2303, '/dev/sg2')
+# Get device located at device_name
+device = badusb.get_device(phison.Phison2303, device_name)
 
 # Embed firmware
 badusb.embed(payload, firmware, embedded)
