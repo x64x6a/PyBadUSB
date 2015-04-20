@@ -76,11 +76,11 @@ Another example can be found in [example.py](example.py)
 
 ##Module
 The Python module is split up into three files:
-* [badusb](pybadusb/badusb.py)
+* [badusb](src/pybadusb/badusb.py)
   - Used to embed firmware and burn firmware to a device.
-* [phison](pybadusb/phison.py)
+* [phison](src/pybadusb/phison.py)
   - Used to create SCSI commands for the device to get info, burn firmware, etc.
-* [scsi](pybadusb/src/scsi.cpp)
+* [scsi](src/scsi.cpp)
   - Used to send SCSI commands to the device
   - Written in C++ as a Python extension module
 

@@ -9,8 +9,9 @@ else:
 
 
 setup(	name='pybadusb',
-		version='0.2',
+		version='1.0',
+		package_dir = {'': 'src'},
 		packages=['pybadusb'],
 		ext_package='pybadusb',
-		ext_modules=[Extension('scsi', ['pybadusb/src/scsi.cpp'], extra_compile_args = scsi_compile_args)],
+		ext_modules=[Extension('scsi', ['src/scsi.cpp'], extra_compile_args = scsi_compile_args)],
 	)
