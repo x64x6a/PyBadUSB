@@ -1,3 +1,5 @@
 *.ini
 *.py[cod]
 build/
+*.egg-info
+dist/
