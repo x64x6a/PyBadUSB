@@ -14,7 +14,7 @@ You can compile your own [here](https://github.com/adamcaudill/Psychson/tree/mas
 
 The burner image used is in [bin/BN03V114M.BIN](bin/BN03V114M.BIN).
 Links for finding your own burner image:
-* [usbdev](http://www.usbdev.ru/files/phison/)
+* May find one on [usbdev](http://www.usbdev.ru/files/phison/)
 * [More info](https://github.com/adamcaudill/Psychson/wiki/Obtaining-a-Burner-Image)
 
 ###Rubber Ducky
