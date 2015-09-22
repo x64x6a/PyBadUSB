@@ -46,7 +46,25 @@ Run the setup script:
 python setup.py install
 ```
 
+##Running
+You can run the module as a script:
+```
+python -m pybadusb
+```
+
+Example using Windows:
+```
+python -m pybadusb --device H --firmware bin/fw.bin --burner bin/BN03V114M.BIN --payload rubberducky/inject.bin
+```
+
+Example using a Linux distro:
+```
+python -m pybadusb --device /dev/sg2 --firmware bin/fw.bin --burner bin/BN03V114M.BIN --payload rubberducky/inject.bin
+```
+
 ##Example Code
+You can also use the module within a python script.
+
 Here's some example code to get you started:
 ```python
 from pybadusb import badusb, phison
