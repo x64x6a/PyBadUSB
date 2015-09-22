@@ -1,5 +1,5 @@
 from pybadusb import badusb, phison
-import platform # to check OS
+import sys
 
 def print_info(device):
 	info  = "\nInformation:\n"
@@ -15,15 +15,14 @@ if __name__ == '__main__':
 	burner   = 'bin/BN03V114M.BIN'
 	
 	print 'Getting device..'
-	if platform.system() == 'Windows':
-		# For Windows:
+	if 'win' in sys.platform.lower():
 		device = badusb.get_device(phison.Phison2303, 'H')
-		
-		# Alternative:
-		#device = badusb.find_drive(phison.Phison2303)
-	else:
-		# For Linux:
+		#device = badusb.find_drive(phison.Phison2303) # alternative
+	elif 'linux' in sys.platform.lower():
 		device = badusb.get_device(phison.Phison2303, '/dev/sg2')
+	else:
+		path = raw_input("\nOperating system not detected!\nPlease input path to device. >")
+		device = badusb.get_device(phison.Phison2303, path)
 	
 	if not device:
 		print 'Device not found!'
