@@ -60,16 +60,6 @@ device.close()
 ```
 Another example can be found in [example.py](example.py)
 
-##Module
-The Python module is split up into three files:
-* [badusb](lib/pybadusb/badusb.py)
-  - Used to embed firmware and burn firmware to a device.
-* [phison](lib/pybadusb/phison.py)
-  - Used to create SCSI commands for the device to get info, burn firmware, etc.
-* [scsi](lib/scsi.cpp)
-  - Used to send SCSI commands to the device
-  - Written in C++ as a Python extension module
-
 ##Firmware
 The base firmware you can use is in [bin/fw.bin](bin/fw.bin).
 You can compile your own [here](https://github.com/adamcaudill/Psychson/tree/master/firmware).
@@ -101,3 +91,12 @@ More info on this can be found [here](http://en.wikipedia.org/wiki/USB_Attached_
 
 You can check a device's chipset using a one of these scripts:  [Windows](win_checkinfo.py) or [Linux](linux_checkinfo.py).
 
+##Module
+The Python module is split up into three files:
+* [badusb](lib/pybadusb/badusb.py)
+  - Used to embed firmware and burn firmware to a device.
+* [phison](lib/pybadusb/phison.py)
+  - Used to create SCSI commands for the device to get info, burn firmware, etc.
+* [scsi](lib/scsi.cpp)
+  - Used to send SCSI commands to the device
+  - Written in C++ as a Python extension module
