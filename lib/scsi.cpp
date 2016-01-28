@@ -493,7 +493,7 @@ scsi_open(PyObject *self, PyObject *args)
 			Module Setup
 */
 static PyMethodDef scsi_Methods[] = {
-	{"open",  scsi_open, METH_VARARGS, "Returns SCSI device object if succeeds, otherwise returns None."},
+	{"open",  scsi_open, METH_VARARGS, "Returns a SCSI device object if succeeds, otherwise returns None."},
 	{NULL, NULL, 0, NULL}
 };
 
@@ -508,7 +508,7 @@ initscsi(void)
 	if (PyType_Ready(&SCSIType) < 0)
 		return;
 	
-	m = Py_InitModule3("scsi", scsi_Methods, "Creates SCSI a object.");
+	m = Py_InitModule3("scsi", scsi_Methods, "Creates a SCSI object.");
 	if (m == NULL)
 		return;
 
