@@ -1,20 +1,20 @@
-#PyBadUSB
+# PyBadUSB
 PyBadUSB was created to implement BadUSB **ONLY** on a Phison 2303 (2251-03) device using Python.
 The project is currently designed to inject USB Rubber Ducky scripts to a Phison 2303 device.  The python module ```pybadusb``` was created to communicate with the specified USB device.
 
 The project was inspired by [adamcaudill/Psychson](https://github.com/adamcaudill/Psychson) and [flowswitch/phison](https://bitbucket.org/flowswitch/phison).
 
-##Requirements
+## Requirements
 * Python 2.7
 * Windows or Linux
 
-##Installation
+## Installation
 Run the setup script:
 ```
 python setup.py install
 ```
 
-##Running
+## Running
 You can run the module as a script:
 ```
 python -m pybadusb
@@ -30,7 +30,7 @@ Example using a Linux distro:
 python -m pybadusb --device /dev/sg2 --firmware bin/fw.bin --burner bin/BN03V114M.BIN --payload rubberducky/inject.bin
 ```
 
-##Example Code
+## Example Code
 You can also use the module within a python script.
 
 Here's some example code to get you started:
@@ -60,7 +60,7 @@ device.close()
 ```
 Another example can be found in [example.py](example.py)
 
-##Firmware
+## Firmware
 The base firmware you can use is in [bin/fw.bin](bin/fw.bin).
 You can compile your own [here](https://github.com/adamcaudill/Psychson/tree/master/firmware).
 
@@ -69,7 +69,7 @@ Links for finding your own burner image:
 * May find one on [usbdev](http://www.usbdev.ru/files/phison/)
 * [More info](https://github.com/adamcaudill/Psychson/wiki/Obtaining-a-Burner-Image)
 
-##Rubber Ducky
+## Rubber Ducky
 PyBadUSB is currently only designed to embed compiled USB Rubber Ducky scripts.  The test script used can be found in [rubberducky/keys.txt](rubberducky/keys.txt).
 
 You may create your own according to the [Rubber Ducky format](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript) or use one of [these](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Payloads).
@@ -80,7 +80,7 @@ java -jar encoder.jar -i keys.txt -o inject.bin
 ```
 The created binary can then be embedded into the base firmware.  See example code below.
 
-##Phison Device
+## Phison Device
 This project has only been developed to work with USB devices with the Phison 2303 chipset.
 
 It doesn't seem to be documented which USB devices use the chipset, but a list of devices may be found on the [Psychson wiki](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices).
@@ -91,7 +91,7 @@ More info on this can be found [here](http://en.wikipedia.org/wiki/USB_Attached_
 
 You can check a device's chipset using a one of these scripts:  [Windows](win_checkinfo.py) or [Linux](linux_checkinfo.py).
 
-##Module
+## Module
 The Python module is split up into three files:
 * [badusb](lib/pybadusb/badusb.py)
   - Used to embed firmware and burn firmware to a device.
